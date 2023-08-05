@@ -2,7 +2,6 @@ import "./App.css"
 import { useState } from "react"
 
 function App() {
-  const [click, setClick] = useState(0)
   const [GameState, setGameState] = useState("start")
   const GameStateEnum = {
     start: "start",
@@ -43,7 +42,6 @@ function App() {
   const startGame = () => {
     playAgain()
     setGameState(GameStateEnum.playing)
-    setClick(Math.floor(Math.random() * emojis.length))
   }
 
   const selectCard = card => {
