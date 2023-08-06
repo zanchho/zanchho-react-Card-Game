@@ -3,6 +3,7 @@ import { useState } from "react"
 
 function App() {
   const [GameState, setGameState] = useState("start")
+  const [cheatButton, setCheatButton] = useState(false)
   const GameStateEnum = {
     start: "start",
     playing: "playing",
@@ -19,7 +20,9 @@ function App() {
     { id: 7, emoji: "🌈" },
     { id: 8, emoji: "🌨" },
   ]
-
+  const isGameOver = matchArr => {
+    return matchArr.length === emojis.length
+  }
   const [matches, setMatches] = useState(new Map())
   const [selected, setSelected] = useState(new Map())
   const [cards, setCards] = useState([])
@@ -63,18 +66,20 @@ function App() {
       secondCard = secondCard.get(secondCard.keys().next().value)
     if (firstCard && secondCard) {
       if (firstCard.emoji === secondCard.emoji) {
+        let newMatchArr = []
         setMatches(prevMatches => {
           const newMatches = new Map(prevMatches)
           newMatches.set(firstCard.id, firstCard.emoji)
           newMatches.set(secondCard.id, secondCard.emoji)
+          newMatchArr = [...newMatches]
           return newMatches
         })
-
-        setUIBlocked(true)
-        setTimeout(() => {
-          setSelected(new Map())
-          setUIBlocked(false)
-        }, 2000)
+        if (isGameOver(newMatchArr)) {
+          setGameState(GameStateEnum.gameOver)
+        }
+        //for instant Feedback after scoring a match
+        setSelected(new Map())
+        setUIBlocked(false)
       } else {
         setUIBlocked(true)
         setTimeout(() => {
@@ -95,17 +100,13 @@ function App() {
     if (e.key === "Escape") {
       if (GameState === GameStateEnum.playing) {
         setGameState(GameStateEnum.paused)
+        return
+      }
+      if (GameState === GameStateEnum.paused) {
+        setGameState(GameStateEnum.playing)
+        return
       }
     }
-  }
-
-  function gameStartButton() {}
-  function gamePausedHeader() {}
-  function gameOverHeader() {
-    if (GameState === GameStateEnum.gameOver) {
-      return <h1>Game Over</h1>
-    }
-    return <>GO</>
   }
 
   const actualGame = () => {
@@ -118,7 +119,9 @@ function App() {
           onClick={() => selectCard(el)}
           disabled={selected.has(el.id) || matches.has(el.id)}
         >
-          {selected.get(el.id) || matches.get(el.id) ? el.emoji : ""}
+          {selected.get(el.id) || matches.get(el.id) || cheatButton
+            ? el.emoji
+            : ""}
         </button>
       )
     })
@@ -129,15 +132,48 @@ function App() {
 
   return (
     <div className="App">
-      {GameState === GameStateEnum.start ? (
-        <button onClick={() => startGame()}>Start Game</button>
-      ) : (
-        <></>
-      )}
-      {GameState === GameStateEnum.paused ? <h1>Game Paused</h1> : <></>}
-      {matches.size === emojis.length ? <></> : <></>}
-      {GameState === GameStateEnum.playing ? (
-        <div className="cards">{actualGame()}</div>
+      <div className="header">
+        <h1>zanchho's Memory</h1>
+        {GameState === GameStateEnum.start ? (
+          <button onClick={startGame}>Start Game</button>
+        ) : (
+          <></>
+        )}
+
+        {/**TODO fix instead of workaround for not changing state on GameOver */}
+        {matches.size === emojis.length ? (
+          <>
+            <h2>Game Over</h2>
+            <button onClick={startGame}>Start Game Again</button>
+          </>
+        ) : (
+          <></>
+        )}
+      </div>
+      {GameState === GameStateEnum.paused ? <h2>Game Paused</h2> : <></>}
+
+      {/**TODO fix instead of workaround for not changing state on GameOver */}
+      <div
+        className={`cards ${
+          matches.size === emojis.length || GameState !== GameStateEnum.playing
+            ? "hidden"
+            : ""
+        }`}
+      >
+        {actualGame()}
+      </div>
+      {matches.size !== emojis.length && GameState === GameStateEnum.playing ? (
+        <button
+          className="cheat"
+          onMouseDown={() => {
+            setCheatButton(!cheatButton)
+          }}
+          onMouseUp={() => {
+            setCheatButton(!cheatButton)
+          }}
+        >
+          Cheaty Button for lazy ME
+        </button>
       ) : (
         <></>
       )}
