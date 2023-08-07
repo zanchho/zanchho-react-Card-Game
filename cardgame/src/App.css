@@ -1,3 +1,8 @@
+:root {
+  --amount-items: 8;
+  --rows: 2;
+}
+
 .App {
   text-align: center;
 }
@@ -17,10 +22,11 @@
   width: 90vw;
   margin: auto auto auto auto;
   flex-wrap: wrap;
+  overflow: clip;
 }
 .card {
-  flex: 1 0 auto;
-  height: 50%;
+  flex: 1 0 var(--width);
+  height: var(--height);
   font-size: 2em;
   background-color: darkblue;
 }

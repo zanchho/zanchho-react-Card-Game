@@ -11,15 +11,44 @@ function App() {
     gameOver: "gameover",
   }
   const emojis = [
-    { id: 1, emoji: "🚙" },
-    { id: 2, emoji: "⭐" },
-    { id: 3, emoji: "🌈" },
-    { id: 4, emoji: "🌨" },
-    { id: 5, emoji: "🚙" },
-    { id: 6, emoji: "⭐" },
-    { id: 7, emoji: "🌈" },
-    { id: 8, emoji: "🌨" },
+    { emoji: "🚙" },
+    { emoji: "⭐" },
+    { emoji: "🌈" },
+    { emoji: "🌨" },
+    { emoji: "🚙" },
+    { emoji: "⭐" },
+    { emoji: "🌈" },
+    { emoji: "🌨" },
+    { emoji: "🫶" }, //heart hand
+    { emoji: "🫶" }, //heart hand
+    { emoji: "☀" },
+    { emoji: "☀" },
   ]
+  emojis.forEach((item, i) => {
+    item.id = i + 1
+  })
+
+  function roundValue(value) {
+    let decimal = value % 1
+    if (decimal < 0.5) {
+      return Math.floor(value)
+    }
+    return Math.floor(value + 1)
+  }
+  /**
+  --amount-items: var(--amount-items);
+  --rows: var(--rows);
+  --_itemsPerRow: calc(var(--amount-items) / var(--rows));
+ */
+  const amount_items = emojis.length
+  const row = 4
+  const _itemsPerRow = roundValue(amount_items / row)
+
+  const customGameFieldStyles = {
+    "--width": roundValue(100 / _itemsPerRow) + "%",
+    "--height": roundValue(100 / row) + "%",
+  }
+
   const isGameOver = matchArr => {
     return matchArr.length === emojis.length
   }
@@ -154,6 +183,7 @@ function App() {
 
       {/**TODO fix instead of workaround for not changing state on GameOver */}
       <div
+        style={customGameFieldStyles}
         className={`cards ${
           matches.size === emojis.length || GameState !== GameStateEnum.playing
             ? "hidden"
@@ -170,6 +200,9 @@ function App() {
           }}
           onMouseUp={() => {
             setCheatButton(!cheatButton)
+          }}
+          onMouseLeave={() => {
+            setCheatButton(false)
           }}
         >
           Cheaty Button for lazy ME
