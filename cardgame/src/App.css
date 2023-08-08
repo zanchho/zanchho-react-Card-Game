@@ -1,6 +1,7 @@
 :root {
   --amount-items: 8;
   --rows: 2;
+  --card-color: rgba(31, 31, 31, 1);
 }
 
 .App {
@@ -15,26 +16,60 @@
 }
 
 .cards {
-  display: flex;
-  flex-direction: row;
-  background-color: darkcyan;
+  display: grid;
+  grid-template-columns: repeat(var(--items-per-row), 1fr);
+  grid-template-rows: repeat(var(--rows), 1fr);
+  gap: 1vmin;
   height: 80vh;
   width: 90vw;
-  margin: auto auto auto auto;
-  flex-wrap: wrap;
-  overflow: clip;
-}
-.card {
-  flex: 1 0 var(--width);
-  height: var(--height);
-  font-size: 2em;
-  background-color: darkblue;
+  margin: auto;
+  padding: 1vmin;
 }
 
+.card {
+  font-size: 10vmin;
+  background-color: var(--card-color);
+  border: 0.5vmin solid;
+  border-color: var(--card-color);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.card:disabled {
+  border-color: var(--card-color);
+}
+.card:hover:not(:disabled) {
+  animation-name: cardHoverBorder;
+  animation-duration: 2s;
+  animation-iteration-count: infinite;
+}
+.card.front {
+  background-color: rgb(61, 61, 61);
+  transition: 100ms ease-in-out;
+}
+.card.matched {
+  background-color: rgb(30, 30, 30);
+  transition: 100ms ease-in-out;
+}
 .hidden {
   display: none !important;
 }
 
 .cheat {
   margin: 1% auto auto;
+}
+
+@keyframes cardHoverBorder {
+  0% {
+    border-color: rgb(46, 0, 0);
+  }
+  33% {
+    border-color: rgb(0, 0, 46);
+  }
+  66% {
+    border-color: rgb(46, 46, 0);
+  }
+  100% {
+    border-color: rgb(0, 46, 0);
+  }
 }

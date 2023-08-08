@@ -3,7 +3,6 @@ import { useState } from "react"
 
 function App() {
   const [GameState, setGameState] = useState("start")
-  const [cheatButton, setCheatButton] = useState(false)
   const GameStateEnum = {
     start: "start",
     playing: "playing",
@@ -37,18 +36,14 @@ function App() {
     }
     return Math.floor(value + 1)
   }
-  /**
-  --amount-items: var(--amount-items);
-  --rows: var(--rows);
-  --_itemsPerRow: calc(var(--amount-items) / var(--rows));
- */
   const amount_items = emojis.length
   const row = 4
   const _itemsPerRow = roundValue(amount_items / row)
 
   const customGameFieldStyles = {
-    "--width": roundValue(100 / _itemsPerRow) + "%",
-    "--height": roundValue(100 / row) + "%",
+    "--amount-items": amount_items,
+    "--rows": row,
+    "--items-per-row": _itemsPerRow,
   }
 
   const isGameOver = matchArr => {
@@ -105,6 +100,7 @@ function App() {
           newMatchArr = [...newMatches]
           return newMatches
         })
+        //?
         if (isGameOver(newMatchArr)) {
           setGameState(GameStateEnum.gameOver)
         }
@@ -128,6 +124,7 @@ function App() {
   }
 
   function handleEscapeKey(e) {
+    return //TODO leads to bugs
     if (e.key === "Escape") {
       if (GameState === GameStateEnum.playing) {
         setGameState(GameStateEnum.paused)
@@ -145,14 +142,16 @@ function App() {
     cards.forEach(el => {
       cardElems.push(
         <button
-          className={"card "}
+          className={
+            "card " +
+            (selected.get(el.id) ? "front " : "") +
+            (matches.get(el.id) ? "matched " : "")
+          }
           key={el.id}
           onClick={() => selectCard(el)}
-          disabled={selected.has(el.id) || matches.has(el.id)}
+          disabled={selected.has(el.id) || matches.has(el.id) || isUIblocked}
         >
-          {selected.get(el.id) || matches.get(el.id) || cheatButton
-            ? el.emoji
-            : ""}
+          {selected.get(el.id) || matches.get(el.id) ? el.emoji : ""}
         </button>
       )
     })
@@ -194,24 +193,6 @@ function App() {
       >
         {actualGame()}
       </div>
-      {matches.size !== emojis.length && GameState === GameStateEnum.playing ? (
-        <button
-          className="cheat"
-          onMouseDown={() => {
-            setCheatButton(!cheatButton)
-          }}
-          onMouseUp={() => {
-            setCheatButton(!cheatButton)
-          }}
-          onMouseLeave={() => {
-            setCheatButton(false)
-          }}
-        >
-          Cheaty Button for lazy ME
-        </button>
-      ) : (
-        <></>
-      )}
     </div>
   )
 }
