@@ -24,8 +24,10 @@ function App() {
     { emoji: "☀" },
     { emoji: "☀" },
   ]
+  let idhelper = 1
   emojis.forEach((item, i) => {
-    item.id = i + 1
+    item.id = idhelper + 1
+    idhelper++
   })
 
   function roundValue(value) {
