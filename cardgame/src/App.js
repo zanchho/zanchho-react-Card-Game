@@ -137,7 +137,7 @@ function App() {
     }
   }
 
-  const actualGame = () => {
+  const generateCards = () => {
     const cardElems = []
     cards.forEach(el => {
       cardElems.push(
@@ -191,7 +191,7 @@ function App() {
             : ""
         }`}
       >
-        {actualGame()}
+        {generateCards()}
       </div>
     </div>
   )
