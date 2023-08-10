@@ -44,10 +44,6 @@ function App() {
     "--rows": row,
     "--items-per-row": _itemsPerRow,
   }
-
-  const isGameOver = matchArr => {
-    return matchArr.length === emojis.length
-  }
   const [matches, setMatches] = useState(new Map())
   const [selected, setSelected] = useState(new Map())
   const [cards, setCards] = useState([])
@@ -77,9 +73,7 @@ function App() {
     if (selected.size <= 2 && !selected.has(card.id) && !matches.has(card.id)) {
       setSelected(prevSelected => new Map(prevSelected.set(card.id, card)))
       if (selected.size === 1) {
-        //blockUI maybe
         matchCards(selected, card)
-        //unblock UI
       }
     }
   }
@@ -99,10 +93,6 @@ function App() {
           newMatchArr = [...newMatches]
           return newMatches
         })
-        //?
-        if (isGameOver(newMatchArr)) {
-          setGameState(GameStateEnum.gameOver)
-        }
         //for instant Feedback after scoring a match
         setSelected(new Map())
         setUIBlocked(false)
@@ -143,6 +133,12 @@ function App() {
     return cardElems
   }
 
+  const isgameOver = () => {
+    let isGO = matches.size === emojis.length
+    if (isGO) setGameState(GameStateEnum.gameOver)
+    return isGO
+  }
+
   return (
     <div className="App">
       <div className="header">
@@ -153,8 +149,7 @@ function App() {
           <></>
         )}
 
-        {/**TODO fix instead of workaround for not changing state on GameOver */}
-        {matches.size === emojis.length ? (
+        {isgameOver() ? (
           <>
             <h2>Game Over</h2>
             <button onClick={startGame}>Start Game Again</button>
@@ -164,13 +159,10 @@ function App() {
         )}
       </div>
 
-      {/**TODO fix instead of workaround for not changing state on GameOver */}
       <div
         style={customGameFieldStyles}
         className={`cards ${
-          matches.size === emojis.length || GameState !== GameStateEnum.playing
-            ? "hidden"
-            : ""
+          isgameOver() || GameState !== GameStateEnum.playing ? "hidden" : ""
         }`}
       >
         {generateCards()}
