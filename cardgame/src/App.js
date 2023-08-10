@@ -6,7 +6,6 @@ function App() {
   const GameStateEnum = {
     start: "start",
     playing: "playing",
-    paused: "paused",
     gameOver: "gameover",
   }
   const emojis = [
@@ -123,20 +122,6 @@ function App() {
     setSelected(new Map())
   }
 
-  function handleEscapeKey(e) {
-    return //TODO leads to bugs
-    if (e.key === "Escape") {
-      if (GameState === GameStateEnum.playing) {
-        setGameState(GameStateEnum.paused)
-        return
-      }
-      if (GameState === GameStateEnum.paused) {
-        setGameState(GameStateEnum.playing)
-        return
-      }
-    }
-  }
-
   const generateCards = () => {
     const cardElems = []
     cards.forEach(el => {
@@ -158,8 +143,6 @@ function App() {
     return cardElems
   }
 
-  const windowESClistener = window.addEventListener("keydown", handleEscapeKey)
-
   return (
     <div className="App">
       <div className="header">
@@ -180,7 +163,6 @@ function App() {
           <></>
         )}
       </div>
-      {GameState === GameStateEnum.paused ? <h2>Game Paused</h2> : <></>}
 
       {/**TODO fix instead of workaround for not changing state on GameOver */}
       <div
