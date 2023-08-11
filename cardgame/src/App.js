@@ -85,12 +85,10 @@ function App() {
       secondCard = secondCard.get(secondCard.keys().next().value)
     if (firstCard && secondCard) {
       if (firstCard.emoji === secondCard.emoji) {
-        let newMatchArr = []
         setMatches(prevMatches => {
           const newMatches = new Map(prevMatches)
           newMatches.set(firstCard.id, firstCard.emoji)
           newMatches.set(secondCard.id, secondCard.emoji)
-          newMatchArr = [...newMatches]
           return newMatches
         })
         //for instant Feedback after scoring a match
@@ -133,12 +131,6 @@ function App() {
     return cardElems
   }
 
-  const isgameOver = () => {
-    let isGO = matches.size === emojis.length
-    if (isGO) setGameState(GameStateEnum.gameOver)
-    return isGO
-  }
-
   return (
     <div className="App">
       <div className="header">
@@ -149,7 +141,7 @@ function App() {
           <></>
         )}
 
-        {isgameOver() ? (
+        {matches.size === emojis.length ? (
           <>
             <h2>Game Over</h2>
             <button onClick={startGame}>Start Game Again</button>
@@ -162,7 +154,9 @@ function App() {
       <div
         style={customGameFieldStyles}
         className={`cards ${
-          isgameOver() || GameState !== GameStateEnum.playing ? "hidden" : ""
+          matches.size === emojis.length || GameState !== GameStateEnum.playing
+            ? "hidden"
+            : ""
         }`}
       >
         {generateCards()}
